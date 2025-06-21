@@ -28,20 +28,9 @@ console.log("✅ message.route.js loaded");
 
 const router = express.Router();
 
-// Get users for the sidebar
+// No regex in routes — now fully Render/Node.js v22 safe
 router.get("/users", protectRoute, getUsersForSidebar);
-
-// Get messages by ID (only allow alphanumeric IDs)
-router.get("/:id([a-zA-Z0-9]+)", protectRoute, getMessages);
-
-// Send a message to a specific ID
-router.post("/send/:id([a-zA-Z0-9]+)", protectRoute, sendMessage);
-
-// Optional: catch-all route to handle undefined paths under /api/messages
-router.all("*", (req, res) => {
-  console.error("❌ Invalid message route accessed:", req.path);
-  res.status(404).json({ error: "Route not found in /api/messages" });
-});
+router.get("/:id", protectRoute, getMessages);
+router.post("/send/:id", protectRoute, sendMessage);
 
 export default router;
-
