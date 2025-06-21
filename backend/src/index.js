@@ -56,14 +56,13 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
-// ✅ Dynamic allowed origins
+// ✅ Define allowed origins: local + Render frontend
 const allowedOrigins = [
-  "http://localhost:5173",                     // for local development
-  process.env.CLIENT_URL                       // for production (Render frontend URL)
+  "http://localhost:5173", // local dev
+  process.env.CLIENT_URL, // from Render env var
 ];
 
-app.use(express.json());
-app.use(cookieParser());
+// ✅ CORS Middleware with origin check
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -77,25 +76,28 @@ app.use(
   })
 );
 
-// 🟢 Log requests
+// ✅ Basic middleware
+app.use(express.json());
+app.use(cookieParser());
+
+// 🟢 Log all HTTP requests (for debug)
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
   next();
 });
 
-console.log("🛠 Registering routes...");
+// ✅ API routes
 app.use("/api/auth", authRoutes);
 app.use("/api/messages", messageRoutes);
 
-// ❌ Remove this block for backend-only deployment
-// if (process.env.NODE_ENV === "production") {
-//   app.use(express.static(path.join(__dirname, "../frontend/dist")));
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
-//   });
-// }
+// ❌ Skip serving frontend build files in backend deployment
+// app.use(express.static(path.join(__dirname, "../frontend/dist")));
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname, "../frontend", "dist", "index.html"));
+// });
 
+// ✅ Start server and connect DB
 server.listen(PORT, () => {
-  console.log(`🚀 Server is running on http://localhost:${PORT}`);
+  console.log(`🚀 Server running on http://localhost:${PORT}`);
   connectDB();
 });
