@@ -13,23 +13,17 @@ dotenv.config();
 const PORT = process.env.PORT || 5000;
 const __dirname = path.resolve();
 
-// ✅ Define allowed origins: local + Render frontend
+// ✅ Explicitly define allowed origins
 const allowedOrigins = [
-  "http://localhost:5173", // local dev
-  process.env.CLIENT_URL, // your deployed frontend (from Render env vars)
+  "http://localhost:5173", // for local dev
+  "https://chatapp-7-cse0.onrender.com", // deployed frontend on Render
 ];
 
-// ✅ CORS Middleware with origin check
+// ✅ CORS middleware with fixed config
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
+    origin: allowedOrigins, // ✅ must be an array — not a function
+    credentials: true, // ✅ allows cookies to be sent from browser
   })
 );
 
@@ -37,9 +31,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-// ✅ Request logger (good for debugging)
+// ✅ Debug logger
 app.use((req, res, next) => {
   console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`);
+  console.log("Cookies:", req.cookies);
   next();
 });
 
