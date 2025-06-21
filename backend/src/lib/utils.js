@@ -5,10 +5,10 @@ export const generateToken = (userId, res) => {
     expiresIn: "7d",
   });
 
-  res.cookie("token", token, {
+  res.cookie("jwt", token, {
     httpOnly: true,
-    secure: process.env.NODE_ENV !== "development", // Secure cookie for production (Render)
-    sameSite: "None", // ✅ Required for cross-site cookies (frontend + backend on different domains)
+    secure: process.env.NODE_ENV !== "development", // Only true in production
+    sameSite: "None", // ✅ Needed for cross-site (Render frontend + backend)
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   });
 
