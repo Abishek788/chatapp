@@ -7,32 +7,31 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://chatapp-7-cse0.onrender.com"],
+    credentials: true,
   },
 });
+
+const userSocketMap = {}; // { userId: socketId }
 
 export function getReceiverSocketId(userId) {
   return userSocketMap[userId];
 }
 
-//used to store online users
-const userSocketMap = {}; //{userId: socketId}
-
 io.on("connection", (socket) => {
   console.log("a user connected", socket.id);
 
-  const userId = socket.handshake.query.userId; // Assuming userId is sent in the query params
+  const userId = socket.handshake.query.userId;
   if (userId) {
     userSocketMap[userId] = socket.id;
   }
 
-  //io.emit() to send a message to all connected clients
   io.emit("getOnlineUsers", Object.keys(userSocketMap));
 
   socket.on("disconnect", () => {
     console.log("user disconnected", socket.id);
-    delete userSocketMap[userId]; // Remove the user from the map on disconnect
-    io.emit("getOnlineUsers", Object.keys(userSocketMap)); // Update all clients with the new list of online users
+    delete userSocketMap[userId];
+    io.emit("getOnlineUsers", Object.keys(userSocketMap));
   });
 });
 
