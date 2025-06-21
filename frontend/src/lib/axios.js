@@ -7,12 +7,14 @@
 
 import axios from "axios";
 
+// Vite-style env access
 const baseURL =
-  process.env.NODE_ENV === "development"
+  import.meta.env.MODE === "development"
     ? "http://localhost:5002/api"
-    : process.env.REACT_APP_BACKEND_URL;
+    : import.meta.env.VITE_API_URL;
 
 export const axiosInstance = axios.create({
   baseURL,
   withCredentials: true,
 });
+
