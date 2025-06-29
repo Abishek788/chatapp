@@ -10,7 +10,7 @@ import { connectDB } from "./lib/db.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 const __dirname = path.resolve();
 
 // ✅ Explicitly define allowed origins
@@ -28,7 +28,7 @@ app.use(
 );
 
 // ✅ Middleware
-app.use(express.json());j
+app.use(express.json());
 app.use(cookieParser());
 
 // ✅ Debug logger
